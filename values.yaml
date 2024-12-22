@@ -1,7 +1,7 @@
 namespace: kuttle
 
 operator:
-  image: kuttleio/ktl:v1.0.0
+  image: ktlai/kop:v1.0.0
   replicas: 1
 
 ingress:
