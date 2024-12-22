@@ -1,0 +1,12 @@
+namespace: kuttle
+
+operator:
+  image: kuttleio/ktl:v1.0.0
+  replicas: 1
+
+ingress:
+  enabled: true
+  host: app.ktl.ai
+
+license:
+  token: "FREE"
