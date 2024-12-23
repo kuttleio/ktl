@@ -7,30 +7,31 @@ spec:
   names:
     kind: Env
     plural: envs
+    singular: env
   scope: Namespaced
   versions:
-    - name: v1
-      served: true
-      storage: true
-      schema:
-        openAPIV3Schema:
-          type: object
-          properties:
-            spec:
-              type: object
-              properties:
-                services:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      name:
-                        type: string
-                      image:
-                        type: string
-                      replicas:
-                        type: integer
-                      public:
-                        type: boolean
-                      port:
-                        type: integer
+  - name: v1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              services:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    image:
+                      type: string
+                    replicas:
+                      type: integer
+                    public:
+                      type: boolean
+                    port:
+                      type: integer

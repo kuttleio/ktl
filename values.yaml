@@ -10,7 +10,7 @@ crds:
   create: true
 
 ingress:
-  enabled: true
+  enabled: false
   host: app.ktl.ai
 
 license:
