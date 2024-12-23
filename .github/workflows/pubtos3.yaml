@@ -1,4 +1,5 @@
-name: Deploy & Publish - Helm Chart
+name: 
+  Publish to S3 - Helm Chart
 
 on:
   push:
@@ -12,7 +13,7 @@ env:
 
 jobs:
   deploy-helm-chart:
-    name: Deploy Helm Chart to S3
+    name: Publish to S3
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -28,11 +29,11 @@ jobs:
       - name: Helm Package
         run: |
           helm package .
-          mkdir helm-package
-          mv *.tgz helm-package/
+          mkdir helm-pkg
+          mv *.tgz helm-pkg/
 
-      - name: Sync Helm Chart to S3
+      - name: Sync to S3
         run: |
-          aws s3 sync helm-package/ s3://$BUCKET/helm-charts/ \
+          aws s3 sync helm-pkg/ s3://$BUCKET/helm-charts/ \
           --acl public-read \
           --delete
