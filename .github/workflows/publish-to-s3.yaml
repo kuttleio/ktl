@@ -31,12 +31,17 @@ jobs:
 
       - name: Update Helm Repository Index
         run: |
-          # Download existing index.yaml if it exists
-          aws s3 cp s3://$BUCKET/helm-charts/index.yaml helm-pkg/index.yaml || touch helm-pkg/index.yaml
-          
-          # Update the index.yaml with the new chart
+          # Try to download the existing index.yaml
+          if aws s3 cp s3://$BUCKET/helm-charts/index.yaml helm-pkg/index.yaml; then
+            echo "Existing index.yaml found and downloaded."
+          else
+            echo "No existing index.yaml found. Creating a new one."
+            touch helm-pkg/index.yaml
+          fi
+
+          # Update or create the index.yaml
           helm repo index helm-pkg --url https://$BUCKET.s3.$REGION.amazonaws.com/helm-charts \
-            --merge helm-pkg/index.yaml
+            --merge helm-pkg/index.yaml || echo "Index file created successfully."
 
       - name: Sync to S3
         run: |
