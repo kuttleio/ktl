@@ -22,7 +22,7 @@ jobs:
     - name: Package Helm Charts
       run: |
         mkdir -p docs
-        helm package charts/* -d docs
+        helm package . -d docs
         helm repo index docs --url https://kuttleio.github.io/ktl/
 
     - name: Push to GitHub Pages
