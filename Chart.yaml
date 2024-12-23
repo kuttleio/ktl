@@ -1,6 +1,5 @@
 apiVersion: v2
 name: ktl
-description: "Kuttle - Self-hosted Dev Portal built to streamline deployment and manage isolated environments at scale"
-type: application
+description: Helm chart for deploying kop operator and CRDs
 version: 1.0.0
 appVersion: 1.0.0

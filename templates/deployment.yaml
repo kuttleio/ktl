@@ -1,23 +1,28 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}
-  namespace: {{ .Values.namespace }}
+  name: kop
+  namespace: {{ .Release.Namespace }}
   labels:
-    app: {{ .Release.Name }}
+    app: kop
 spec:
-  replicas: {{ .Values.operator.replicas }}
+  replicas: 1
   selector:
     matchLabels:
-      app: {{ .Release.Name }}
+      app: kop
   template:
     metadata:
       labels:
-        app: {{ .Release.Name }}
+        app: kop
     spec:
       containers:
-      - name: {{ .Release.Name }}
-        image: {{ .Values.operator.image }}
+      - name: kop
+        image: "{{ .Values.operator.image.repository }}:{{ .Values.operator.image.tag }}"
+        imagePullPolicy: {{ .Values.operator.image.pullPolicy }}
+        ports:
+        - containerPort: 8080
         env:
-        - name: LICENSE_TOKEN
-          value: "{{ .Values.license.token }}"
+        - name: WATCH_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
