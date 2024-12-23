@@ -1,8 +1,13 @@
 namespace: kuttle
 
 operator:
-  image: ktlai/kop:v1.0.0
-  replicas: 1
+  image:
+    repository: ktlai/kop
+    tag: v1.0.0
+    pullPolicy: IfNotPresent
+
+crds:
+  create: true
 
 ingress:
   enabled: true
