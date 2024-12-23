@@ -1,0 +1,32 @@
+name: 
+  Publish to GH Pages - Helm Chart
+
+on:
+  push:
+    branches:
+      - "master"
+  workflow_dispatch:
+
+jobs:
+  publish:
+    name: Publish Helm Charts to GitHub Pages
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Helm
+      uses: azure/setup-helm@v3
+
+    - name: Package Helm Charts
+      run: |
+        mkdir -p docs
+        helm package charts/* -d docs
+        helm repo index docs --url https://kuttleio.github.io/ktl/
+
+    - name: Push to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: docs
