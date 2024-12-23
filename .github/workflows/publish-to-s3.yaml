@@ -5,51 +5,39 @@ on:
     types:
       - published
   workflow_dispatch:
+    inputs:
+      chart-version:
+        description: "Specify chart version (optional for release builds)"
+        required: false
 
 env:
   REGION: us-west-2
   BUCKET: ktlai-install
 
 jobs:
-  deploy-helm-chart:
+  publish-chart:
     name: Publish Helm Chart to S3
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ECR_DEV_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_ECR_DEV_SECRET_KEY }}
-          aws-region: ${{ env.REGION }}
-
-      - name: Helm Package
+      - name: Determine Chart Version
+        id: chart-version
         run: |
-          helm package . --destination helm-pkg
-
-      - name: Download existing index.yaml if it exists
-        run: |
-          aws s3 cp s3://$BUCKET/helm-charts/index.yaml helm-pkg/index.yaml || echo "No existing index.yaml found, creating a new one"
-
-      - name: Update Helm Repository Index
-        run: |
-          if [ -f helm-pkg/index.yaml ]; then
-            helm repo index helm-pkg --url https://$BUCKET.s3.$REGION.amazonaws.com/helm-charts --merge helm-pkg/index.yaml
+          if [ "${{ github.event_name }}" == "release" ]; then
+            echo "chart-version=${{ github.event.release.tag_name }}" >> $GITHUB_ENV
+          elif [ "${{ github.event_name }}" == "workflow_dispatch" ] && [ -n "${{ github.event.inputs.chart-version }}" ]; then
+            echo "chart-version=${{ github.event.inputs.chart-version }}" >> $GITHUB_ENV
           else
-            helm repo index helm-pkg --url https://$BUCKET.s3.$REGION.amazonaws.com/helm-charts
-          fi
-
-      - name: Sync to S3
-        run: |
-          # Verify that index.yaml was updated
-          if [ ! -s helm-pkg/index.yaml ]; then
-            echo "Error: index.yaml is empty or missing" >&2
+            echo "Error: chart-version is required for workflow_dispatch" >&2
             exit 1
           fi
-          # Upload all charts and the updated index.yaml back to S3
-          aws s3 sync helm-pkg/ s3://$BUCKET/helm-charts/ \
-          --acl public-read \
-          --delete
+
+      - name: Publish Helm Chart to S3
+        uses: toolsascode/helm-s3-action@v1
+        with:
+          s3-bucket: ${{ env.BUCKET }}/helm-charts
+          chart-path: .
+          chart-version: ${{ env.chart-version }}
