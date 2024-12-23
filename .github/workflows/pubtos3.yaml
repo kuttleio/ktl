@@ -29,12 +29,18 @@ jobs:
         run: |
           helm package . --destination helm-pkg
 
-      - name: Make Helm Index
+      - name: Update Helm Repository Index
         run: |
-          helm repo index helm-pkg --url https://$BUCKET.s3.$REGION.amazonaws.com/helm-charts
+          # Download existing index.yaml if it exists
+          aws s3 cp s3://$BUCKET/helm-charts/index.yaml helm-pkg/index.yaml || touch helm-pkg/index.yaml
+          
+          # Update the index.yaml with the new chart
+          helm repo index helm-pkg --url https://$BUCKET.s3.$REGION.amazonaws.com/helm-charts \
+            --merge helm-pkg/index.yaml
 
       - name: Sync to S3
         run: |
+          # Upload all charts and the updated index.yaml back to S3
           aws s3 sync helm-pkg/ s3://$BUCKET/helm-charts/ \
           --acl public-read \
           --delete
