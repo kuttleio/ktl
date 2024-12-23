@@ -1,12 +1,9 @@
-
-name: 
-  Publish to S3 - Helm Chart
+name: Publish Helm Chart to S3
 
 on:
-  push:
-    branches:
-      - "master"
-  workflow_dispatch:
+  release:
+    types:
+      - published
 
 env:
   REGION: us-west-2
@@ -14,8 +11,9 @@ env:
 
 jobs:
   deploy-helm-chart:
-    name: Publish to S3
+    name: Publish Helm Chart to S3
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -29,9 +27,11 @@ jobs:
 
       - name: Helm Package
         run: |
-          helm package .
-          mkdir helm-pkg
-          mv *.tgz helm-pkg/
+          helm package . --destination helm-pkg
+
+      - name: Make Helm Index
+        run: |
+          helm repo index helm-pkg --url https://$BUCKET.s3.$REGION.amazonaws.com/helm-charts
 
       - name: Sync to S3
         run: |
