@@ -1,3 +1,23 @@
+# 🚀 Kuttle - Self-hosted Dev Portal for Isolated Kubernetes Environments
+
+**Kuttle** is a self-hosted developer portal designed to simplify the management of isolated environments in Kubernetes. With Kuttle, you can create, manage, and scale development, testing, and production environments with ease.
+
+## 🌟 **How It Works**
+1. Define environments using a powerful CRD (Custom Resource Definition).
+2. Automatically deploy services, datastores, and configurations into isolated namespaces.
+3. Access environments via custom domains and manage them using a CLI or Helm.
+4. Streamline your workflows with full control over resources and automation.
+
+---
+
+## 🚀 **Why Kuttle?**
+- **Full Isolation**: Every environment runs in its own namespace.
+- **Scalability**: Seamlessly manage multiple environments.
+- **Customizable**: Flexible deployment options to suit any workflow.
+- **Self-hosted**: Complete control over your infrastructure.
+
+---
+
 ## 🚀 **Installation**
 
 1. Add the Kuttle Helm repository:
