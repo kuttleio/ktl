@@ -65,3 +65,44 @@ helm install ktl ktl/ktl --namespace ktl --create-namespace \
   --set ingress.host=custom.yourdomain.com \
   --set operator.replicas=2
 ```
+
+---
+
+## 🗑️ **Uninstalling Kuttle**
+By default, the standard uninstallation keeps your CRDs and data safe, allowing you to reinstall or upgrade without data loss.
+
+### **Standard Uninstallation**
+To uninstall Kuttle and remove all resources created by Helm:
+```bash
+helm uninstall ktl --namespace ktl
+```
+
+**Note:** 
+- The Custom Resource Definitions (CRDs) and any resources created using them (e.g., `Env` objects) will remain in the cluster.
+- This ensures that your data is preserved even if you uninstall Kuttle.
+
+---
+
+### ⚠️ **Complete Removal (Destructive Action)**
+
+If you want to completely remove Kuttle, including all CRDs and their resources, follow these steps. **Be cautious:** this action is irreversible.
+
+1. **Uninstall Helm release:**
+   ```bash
+   helm uninstall ktl --namespace ktl
+   ```
+
+2. **Delete all CRD resources:**
+   ```bash
+   kubectl delete env --all --namespace ktl
+   ```
+
+3. **Delete the CRD itself:**
+   ```bash
+   kubectl delete crd envs.ktl.ai
+   ```
+
+**Warning:** 
+- This will permanently delete all environments and related data. Ensure you have backups or exported data before proceeding.
+
+---
