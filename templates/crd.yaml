@@ -25,13 +25,35 @@ spec:
                 items:
                   type: object
                   properties:
-                    name:
+                    service_name:
                       type: string
-                    image:
-                      type: string
-                    replicas:
+                      description: "Name of the service"
+                    cpu:
                       type: integer
+                      description: "CPU allocation (in millicores)"
+                    memory:
+                      type: integer
+                      description: "Memory allocation (in MB)"
                     public:
                       type: boolean
-                    port:
-                      type: integer
+                      description: "Whether the service is publicly accessible"
+                    endpoint:
+                      type: string
+                      description: "Service endpoint (optional)"
+                    deploy:
+                      type: object
+                      description: "Deployment configuration (optional)"
+                      properties:
+                        gitrepo:
+                          type: string
+                          description: "Git repository"
+                        method:
+                          type: string
+                          enum: ["from_branch", "from_tag"]
+                          description: "Deployment method"
+                        branch:
+                          type: string
+                          description: "Branch to deploy from"
+                        dockerfilepath:
+                          type: string
+                          description: "Path to Dockerfile"
