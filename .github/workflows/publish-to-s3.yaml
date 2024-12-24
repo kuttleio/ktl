@@ -19,6 +19,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Extract Chart Version
+        id: get-version
+        run: |
+          export VERSION=$(grep '^version:' Chart.yaml | awk '{print $2}')
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -28,7 +34,7 @@ jobs:
 
       - name: Helm Package
         run: |
-          helm package . --destination helm-pkg
+          helm package . --destination helm-pkg --version $VERSION
 
       - name: Download existing index.yaml if it exists
         run: |
@@ -48,12 +54,10 @@ jobs:
 
       - name: Sync to S3
         run: |
-          # Verify that index.yaml was updated
           if [ ! -s helm-pkg/index.yaml ]; then
             echo "Error: index.yaml is empty or missing" >&2
             exit 1
           fi
-          # Upload all charts and the updated index.yaml back to S3
           aws s3 sync helm-pkg/ s3://$BUCKET/helm-charts/ \
           --acl public-read \
           --delete
