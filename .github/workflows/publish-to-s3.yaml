@@ -32,11 +32,15 @@ jobs:
 
       - name: Download existing index.yaml if it exists
         run: |
-          aws s3 cp s3://$BUCKET/helm-charts/index.yaml helm-pkg/index.yaml || echo "No existing index.yaml found, creating a new one"
+          if aws s3 ls s3://$BUCKET/helm-charts/index.yaml; then
+            aws s3 cp s3://$BUCKET/helm-charts/index.yaml helm-pkg/index.yaml
+          else
+            echo "No existing index.yaml found, proceeding with a new one"
+          fi
 
       - name: Update Helm Repository Index
         run: |
-          if [ -f helm-pkg/index.yaml ]; then
+          if [ -s helm-pkg/index.yaml ]; then
             helm repo index helm-pkg --url https://$BUCKET.s3.$REGION.amazonaws.com/helm-charts --merge helm-pkg/index.yaml
           else
             helm repo index helm-pkg --url https://$BUCKET.s3.$REGION.amazonaws.com/helm-charts
