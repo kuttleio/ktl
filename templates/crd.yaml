@@ -39,7 +39,7 @@ spec:
                       description: "Whether the service is publicly accessible"
                     endpoint:
                       type: string
-                      description: "Service endpoint (optional)"
+                      description: "Custom domain endpoint for public services (optional)"
                     deploy:
                       type: object
                       description: "Deployment configuration (optional)"
