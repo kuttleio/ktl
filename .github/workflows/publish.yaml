@@ -66,8 +66,8 @@ jobs:
         run: |
           mkdir -p gh-pages
           mv helm-pkg/*.tgz gh-pages/
-          if [ -s helm-pkg/index.yaml ]; then
-            mv helm-pkg/index.yaml gh-pages/
+          if [ -f gh-pages/index.yaml ]; then
+            helm repo index gh-pages --url https://kuttleio.github.io/ktl --merge gh-pages/index.yaml
           else
             helm repo index gh-pages --url https://kuttleio.github.io/ktl
           fi
