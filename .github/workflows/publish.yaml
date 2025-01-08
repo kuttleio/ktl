@@ -1,4 +1,4 @@
-name: Publish Helm Chart to S3
+name: Publish -> S3 + GH Pages
 
 on:
   release:
@@ -12,7 +12,7 @@ env:
 
 jobs:
   deploy-helm-chart:
-    name: Publish Helm Chart to S3
+    name: Publish Helm Chart to S3 and GitHub Pages
     runs-on: ubuntu-latest
 
     steps:
@@ -36,7 +36,7 @@ jobs:
         run: |
           helm package . --destination helm-pkg --version $VERSION
 
-      - name: Download existing index.yaml if it exists
+      - name: Download existing index.yaml from S3 if it exists
         run: |
           if aws s3 ls s3://$BUCKET/helm-charts/index.yaml; then
             aws s3 cp s3://$BUCKET/helm-charts/index.yaml helm-pkg/index.yaml
@@ -44,7 +44,7 @@ jobs:
             echo "No existing index.yaml found, proceeding with a new one"
           fi
 
-      - name: Update Helm Repository Index
+      - name: Update Helm Repository Index for S3
         run: |
           if [ -s helm-pkg/index.yaml ]; then
             helm repo index helm-pkg --url https://$BUCKET.s3.$REGION.amazonaws.com/helm-charts --merge helm-pkg/index.yaml
@@ -61,3 +61,19 @@ jobs:
           aws s3 sync helm-pkg/ s3://$BUCKET/helm-charts/ \
           --acl public-read \
           --delete
+
+      - name: Prepare for GitHub Pages
+        run: |
+          mkdir -p gh-pages
+          mv helm-pkg/*.tgz gh-pages/
+          if [ -s helm-pkg/index.yaml ]; then
+            mv helm-pkg/index.yaml gh-pages/
+          else
+            helm repo index gh-pages --url https://kuttleio.github.io/ktl
+          fi
+
+      - name: Push to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: gh-pages
