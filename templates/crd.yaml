@@ -40,6 +40,18 @@ spec:
                     endpoint:
                       type: string
                       description: "Custom domain endpoint for public services (optional)"
+                    port:
+                      type: integer
+                      description: "Container port (usually 3000-9900)"
+                    replicas:
+                      type: integer
+                      description: "Number of replicas (usually 0-99)"
+                    image:
+                      type: string
+                      description: "Docker image URL (eg. ktlai/kop - pulls from DockerHub)"
+                    command:
+                      type: string
+                      description: "Command how to run container"
                     deploy:
                       type: object
                       description: "Deployment configuration (optional)"
