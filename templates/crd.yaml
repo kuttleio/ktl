@@ -49,6 +49,9 @@ spec:
                     image:
                       type: string
                       description: "Docker image URL (eg. ktlai/kop - pulls from DockerHub)"
+                    command:
+                      type: string
+                      description: "Command how to run container"
                     deploy:
                       type: object
                       description: "Deployment configuration (optional)"
