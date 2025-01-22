@@ -52,6 +52,10 @@ spec:
                     command:
                       type: string
                       description: "Command how to run container"
+                    deployment_method:
+                      type: string
+                      enum: ["from_image", "from_repo"]
+                      description: "Method used for deployment"
                     deploy:
                       type: object
                       description: "Deployment configuration (optional)"
