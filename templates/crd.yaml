@@ -29,10 +29,10 @@ spec:
                       type: string
                       description: "Name of the service"
                     cpu:
-                      type: integer
+                      type: string
                       description: "CPU allocation (in millicores)"
                     memory:
-                      type: integer
+                      type: string
                       description: "Memory allocation (in MB)"
                     public:
                       type: boolean
