@@ -3,11 +3,11 @@ entries:
   ktl:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2025-01-20T16:30:14.802368428Z"
+    created: "2025-01-22T09:14:20.588747892Z"
     description: Helm chart for deploying kop operator and CRDs
-    digest: 2ffe8007b94d557dea815e27c54189610fd2ce557b37f267a78c51dce2097194
+    digest: c7027326907c171d957f413cf8243bb86aba7f6111a69feaa9aabd8d64a2acb5
     name: ktl
     urls:
     - https://kuttleio.github.io/ktl/ktl-1.0.0.tgz
     version: 1.0.0
-generated: "2025-01-20T16:30:14.801470337Z"
+generated: "2025-01-22T09:14:20.587492556Z"
