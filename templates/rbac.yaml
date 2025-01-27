@@ -1,3 +1,4 @@
+# templates/rbac.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -6,12 +7,13 @@ metadata:
     app.kubernetes.io/name: {{ .Chart.Name }}
     app.kubernetes.io/instance: {{ .Release.Name }}
 rules:
-- apiGroups: ["ktl.ai"]
-  resources: ["envs"]
-  verbs: ["get", "list", "watch", "create", "update", "delete", "patch"]
-- apiGroups: [""]
-  resources: ["namespaces"]
-  verbs: ["get", "list", "create", "delete"]
+  - apiGroups: ["ktl.ai"]
+    resources: ["envs"]
+    verbs: ["get", "list", "watch", "create", "update", "delete", "patch"]
+  - apiGroups: [""]
+    resources: ["namespaces"]
+    verbs: ["get", "list", "create", "delete"]
+
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -21,9 +23,9 @@ metadata:
     app.kubernetes.io/name: {{ .Chart.Name }}
     app.kubernetes.io/instance: {{ .Release.Name }}
 subjects:
-- kind: ServiceAccount
-  name: {{ .Values.serviceAccount.name }}
-  namespace: {{ .Values.namespace }}
+  - kind: ServiceAccount
+    name: {{ .Values.serviceAccount.name | default "ktl-operator" }}
+    namespace: {{ .Values.namespace | default .Release.Namespace }}
 roleRef:
   kind: ClusterRole
   name: {{ .Release.Name }}-clusterrole
