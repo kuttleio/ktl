@@ -1,17 +1,47 @@
 namespace: kuttle
 
-operator:
+# KOP (operator) deployment info
+kop:
   image:
     repository: ktlai/kop
-    tag: v1.0.0
+    tag: latest
     pullPolicy: IfNotPresent
 
-crds:
-  create: true
+# klient (frontend) deployment info
+klient:
+  image:
+    repository: ktlai/klient
+    tag: latest
+    pullPolicy: IfNotPresent
 
+# Ingress for the klient service
 ingress:
-  enabled: false
+  enabled: true
   host: app.ktl.ai
+  annotations:
+    kubernetes.io/ingress.class: traefik
+  className: traefik
+
+serviceAccount:
+  name: ktl-operator
 
 license:
   token: "FREE"
+
+# --------------------
+# Traefik Subchart
+# --------------------
+traefik:
+  enabled: true
+  deployment:
+    replicas: 1
+  service:
+    type: LoadBalancer
+    annotations:
+      # Tell MetalLB which address pool to use (optional if you only have one pool)
+      metallb.universe.tf/address-pool: "default-ip-pool"
+  ports:
+    web:
+      exposedPort: 80
+    websecure:
+      exposedPort: 443

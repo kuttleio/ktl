@@ -1,0 +1,35 @@
+{{- if .Values.ingress.enabled }}
+{{- $service := (lookup "v1" "Service" .Release.Namespace "klient") -}}
+
+# If the user is running on Minikube, they can use `minikube tunnel` to assign a public IP.
+# Otherwise, if MetalLB is configured, it will provide an external IP automatically.
+{{- if and $service (hasKey $service "status") (hasKey $service.status "loadBalancer") (hasKey $service.status.loadBalancer "ingress") (gt (len $service.status.loadBalancer.ingress) 0) -}}
+{{- $lb := index $service.status.loadBalancer.ingress 0 -}}
+
+{{- if $lb.ip }}
+#######################################################
+Your Dev Portal is ready!
+URL: http://{{ $lb.ip }}
+#######################################################
+{{- else if $lb.hostname }}
+#######################################################
+Your Dev Portal is ready!
+URL: http://{{ $lb.hostname }}
+#######################################################
+{{- end }}
+
+{{- else -}}
+#######################################################
+Waiting for external IP...
+If you're on Minikube, run:
+  minikube tunnel
+
+Then check again:
+  kubectl get svc -n {{ .Release.Namespace }} klient
+#######################################################
+{{- end }}
+{{- else -}}
+#######################################################
+Ingress is disabled, only internal access is available.
+#######################################################
+{{- end }}

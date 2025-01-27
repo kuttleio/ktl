@@ -1,0 +1,27 @@
+# templates/deployment-klient.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: klient
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: klient
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: klient
+  template:
+    metadata:
+      labels:
+        app: klient
+    spec:
+      containers:
+        - name: klient
+          image: "{{ .Values.klient.image.repository }}:{{ .Values.klient.image.tag }}"
+          imagePullPolicy: {{ .Values.klient.image.pullPolicy }}
+          ports:
+            - containerPort: 3000
+          env:
+            - name: REACT_APP_API_URL
+              value: "http://kop.{{ .Release.Namespace }}.svc.cluster.local:9000"

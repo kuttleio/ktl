@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: klient
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: klient
+spec:
+  # Use NodePort instead of LoadBalancer
+  type: NodePort
+  selector:
+    app: klient
+  ports:
+    - name: http
+      port: 3000      # Service port (ClusterIP)
+      targetPort: 3000
+      nodePort: 30080 # External node port on the host

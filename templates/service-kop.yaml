@@ -1,0 +1,17 @@
+# templates/service-kop.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: kop
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: kop
+spec:
+  type: ClusterIP
+  selector:
+    app: kop
+  ports:
+    - name: http
+      protocol: TCP
+      port: 9000
+      targetPort: 9000

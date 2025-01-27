@@ -1,0 +1,33 @@
+# templates/deployment-kop.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kop
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: kop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kop
+  template:
+    metadata:
+      labels:
+        app: kop
+    spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      containers:
+        - name: kop
+          image: "{{ .Values.kop.image.repository }}:{{ .Values.kop.image.tag }}"
+          imagePullPolicy: {{ .Values.kop.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 9000
+          env:
+            - name: WATCH_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: SERVICE_PORT
+              value: "9000"
