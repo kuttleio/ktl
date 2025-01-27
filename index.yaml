@@ -3,16 +3,16 @@ entries:
   ktl:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2025-01-27T09:27:34.463278712Z"
+    created: "2025-01-27T09:31:40.952849617Z"
     dependencies:
     - condition: traefik.enabled
       name: traefik
       repository: https://helm.traefik.io/traefik
       version: 22.0.0
     description: Installs Kuttle DevPortal (MetalLB, Traefik, deployments)
-    digest: 415fb7e83ff52c31c7306c796f6b13a6eb014102e91235dc1ac91a7e4bb94946
+    digest: c7e3fd7a1ff8a3d1fd3c4d34e10996bada5da1aad95fd465796af53ed909b440
     name: ktl
     urls:
     - https://kuttleio.github.io/ktl/ktl-1.0.0.tgz
     version: 1.0.0
-generated: "2025-01-27T09:27:34.457969456Z"
+generated: "2025-01-27T09:31:40.947449327Z"
