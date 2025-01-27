@@ -5,14 +5,14 @@ kop:
   image:
     repository: ktlai/kop
     tag: latest
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
 
 # klient (frontend) deployment info
 klient:
   image:
     repository: ktlai/klient
     tag: latest
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
 
 # Ingress for the klient service
 ingress:
