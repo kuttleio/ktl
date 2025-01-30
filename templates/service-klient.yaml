@@ -1,3 +1,4 @@
+# templates/service-klient.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -5,13 +6,21 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app: klient
+  annotations:
+    {{- if eq .Values.cloudProvider "eks" }}
+    {{- toYaml .Values.service.annotations.eks | nindent 4 }}
+    {{- end }}
+    {{- if eq .Values.cloudProvider "gke" }}
+    {{- toYaml .Values.service.annotations.gke | nindent 4 }}
+    {{- end }}
+    {{- if eq .Values.cloudProvider "aks" }}
+    {{- toYaml .Values.service.annotations.aks | nindent 4 }}
+    {{- end }}
 spec:
-  # Use NodePort instead of LoadBalancer
-  type: NodePort
+  type: {{ .Values.service.type | default "LoadBalancer" }}
   selector:
     app: klient
   ports:
     - name: http
-      port: 3000      # Service port (ClusterIP)
+      port: 80
       targetPort: 3000
-      nodePort: 30080 # External node port on the host

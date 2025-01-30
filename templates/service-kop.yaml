@@ -1,17 +1,26 @@
-# templates/service-kop.yaml
-apiVersion: v1
-kind: Service
+# templates/deployment-kop.yaml
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: kop
   namespace: {{ .Release.Namespace }}
   labels:
     app: kop
 spec:
-  type: ClusterIP
+  replicas: 1
   selector:
-    app: kop
-  ports:
-    - name: http
-      protocol: TCP
-      port: 9000
-      targetPort: 9000
+    matchLabels:
+      app: kop
+  template:
+    metadata:
+      labels:
+        app: kop
+    spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      containers:
+        - name: kop
+          image: "{{ .Values.kop.image.repository }}:{{ .Values.kop.image.tag }}"
+          imagePullPolicy: {{ .Values.kop.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 9000

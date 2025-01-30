@@ -1,47 +1,40 @@
-namespace: kuttle
-
-# KOP (operator) deployment info
-kop:
-  image:
-    repository: ktlai/kop
-    tag: latest
-    pullPolicy: Always
-
-# klient (frontend) deployment info
-klient:
-  image:
-    repository: ktlai/klient
-    tag: latest
-    pullPolicy: Always
-
-# Ingress for the klient service
-ingress:
-  enabled: true
-  host: app.ktl.ai
-  annotations:
-    kubernetes.io/ingress.class: traefik
-  className: traefik
+cloudProvider: "eks"  # "eks", "gke", or "aks"
 
 serviceAccount:
-  name: ktl-operator
+  name: "ktl-operator"
 
-license:
-  token: "FREE"
+service:
+  type: "LoadBalancer"
+  annotations:
+    eks:
+      service.beta.kubernetes.io/aws-load-balancer-type: "external"
+      alb.ingress.kubernetes.io/scheme: "internet-facing"
+      # For NLB, replace "external" with "nlb" above.
+    gke:
+      cloud.google.com/load-balancer-type: "External"
+    aks:
+      service.beta.kubernetes.io/azure-load-balancer-internal: "false"
 
-# --------------------
-# Traefik Subchart
-# --------------------
-traefik:
-  enabled: true
-  deployment:
-    replicas: 1
-  service:
-    type: LoadBalancer
-    annotations:
-      # Tell MetalLB which address pool to use (optional if you only have one pool)
-      metallb.universe.tf/address-pool: "default-ip-pool"
-  ports:
-    web:
-      exposedPort: 80
-    websecure:
-      exposedPort: 443
+ingress:
+  enabled: false
+  className: ""
+  host: "app.ktl.ai"
+  annotations:
+    eks:
+      alb.ingress.kubernetes.io/scheme: "internet-facing"
+    gke:
+      kubernetes.io/ingress.class: "gce"
+    aks:
+      kubernetes.io/ingress.class: "azure/application-gateway"
+
+klient:
+  image:
+    repository: "ktlai/klient"
+    tag: "latest"
+    pullPolicy: "Always"
+
+kop:
+  image:
+    repository: "ktlai/kop"
+    tag: "latest"
+    pullPolicy: "Always"

@@ -1,15 +1,22 @@
+# templates/ingress.yaml
 {{- if .Values.ingress.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ .Release.Name }}-ingress
+  name: klient-ingress
   namespace: {{ .Release.Namespace }}
   annotations:
-    {{- range $key, $value := .Values.ingress.annotations }}
-    {{ $key }}: "{{ $value }}"
+    {{- if eq .Values.cloudProvider "eks" }}
+    {{- toYaml .Values.ingress.annotations.eks | nindent 4 }}
+    {{- end }}
+    {{- if eq .Values.cloudProvider "gke" }}
+    {{- toYaml .Values.ingress.annotations.gke | nindent 4 }}
+    {{- end }}
+    {{- if eq .Values.cloudProvider "aks" }}
+    {{- toYaml .Values.ingress.annotations.aks | nindent 4 }}
     {{- end }}
 spec:
-  ingressClassName: {{ .Values.ingress.className }}
+  ingressClassName: {{ .Values.ingress.className | quote }}
   rules:
     - host: {{ .Values.ingress.host }}
       http:
@@ -19,7 +26,6 @@ spec:
             backend:
               service:
                 name: klient
-                # must match the Service port (5000), not 80
                 port:
-                  number: 5000
+                  number: 80
 {{- end }}
