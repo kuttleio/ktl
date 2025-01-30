@@ -1,35 +1,46 @@
-{{- if .Values.ingress.enabled }}
-{{- $service := (lookup "v1" "Service" .Release.Namespace "klient") -}}
+{{- /*
+This file appears after chart installation to provide final instructions and info.
+*/ -}}
+############################################################
+🎉 Welcome to the KTL.ai DevPortal! 🚀
+Your DevPortal has been successfully deployed into Kubernetes and is ready to use!
 
-# If the user is running on Minikube, they can use `minikube tunnel` to assign a public IP.
-# Otherwise, if MetalLB is configured, it will provide an external IP automatically.
-{{- if and $service (hasKey $service "status") (hasKey $service.status "loadBalancer") (hasKey $service.status.loadBalancer "ingress") (gt (len $service.status.loadBalancer.ingress) 0) -}}
-{{- $lb := index $service.status.loadBalancer.ingress 0 -}}
+What is DevPortal?
+DevPortal is your centralized solution for managing environments, resources, and application lifecycles in Kubernetes.
+It simplifies deployments, scales with your team, and works seamlessly with EKS, GKE, and AKS.
 
-{{- if $lb.ip }}
-#######################################################
-Your Dev Portal is ready!
-URL: http://{{ $lb.ip }}
-#######################################################
-{{- else if $lb.hostname }}
-#######################################################
-Your Dev Portal is ready!
-URL: http://{{ $lb.hostname }}
-#######################################################
-{{- end }}
+🌐 How to Access Your Portal:
+1. Wait for the LoadBalancer or Ingress DNS to be ready.
+2. If you're using a LoadBalancer service, run:
+   kubectl get svc -n {{ .Release.Namespace }} klient -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'
+   Then open the resulting URL in your browser.
 
-{{- else -}}
-#######################################################
-Waiting for external IP...
-If you're on Minikube, run:
-  minikube tunnel
+3. If you're using an Ingress:
+   kubectl get ingress -n {{ .Release.Namespace }} klient-ingress
+   For AWS EKS (ALB): The ADDRESS field shows the ALB hostname.
+   For GKE (GCE Ingress) or AKS, an External IP or hostname appears once provisioning is complete.
 
-Then check again:
-  kubectl get svc -n {{ .Release.Namespace }} klient
-#######################################################
-{{- end }}
-{{- else -}}
-#######################################################
-Ingress is disabled, only internal access is available.
-#######################################################
-{{- end }}
+📋 Supported Providers:
+- **AWS EKS**: Automatically uses an AWS ALB if service.type=LoadBalancer or Ingress with alb annotations.
+- **Google GKE**: Integrates with Google Cloud External Load Balancer.
+- **Azure AKS**: Works with Azure Load Balancer or Application Gateway.
+
+🛠 Troubleshooting:
+- If the LoadBalancer or Ingress is not available immediately, verify the status:
+   kubectl describe svc -n {{ .Release.Namespace }} klient
+   kubectl get svc -n {{ .Release.Namespace }}
+   kubectl get ingress -n {{ .Release.Namespace }}
+
+💡 Pro Tip:
+Customize this deployment by editing `values.yaml` or using Helm flags:
+   helm upgrade --install ktl ./ktl-chart \
+     --namespace {{ .Release.Namespace }} \
+     --set cloudProvider=eks \
+     --set ingress.enabled=true \
+     ...
+
+📖 Documentation:
+More details and guides at:
+https://github.com/kuttleio/ktl
+
+Thanks for using KTL.ai DevPortal! ✨
