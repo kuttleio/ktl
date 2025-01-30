@@ -1,7 +1,9 @@
-cloudProvider: "eks"  # "eks", "gke", or "aks"
+cloudProvider: "eks"  # Currently only supporting AWS EKS
 
+accountId: ""  # If not provided, Helm will attempt to infer it
 serviceAccount:
-  name: "ktl-operator"
+  name: "aws-load-balancer-controller"
+  roleArn: ""  # If empty, Helm will generate based on accountId
 
 service:
   type: "LoadBalancer"
@@ -9,23 +11,15 @@ service:
     eks:
       service.beta.kubernetes.io/aws-load-balancer-type: "external"
       alb.ingress.kubernetes.io/scheme: "internet-facing"
-      # For NLB, replace "external" with "nlb" above.
-    gke:
-      cloud.google.com/load-balancer-type: "External"
-    aks:
-      service.beta.kubernetes.io/azure-load-balancer-internal: "false"
+      alb.ingress.kubernetes.io/group.name: "ktl-alb"
 
 ingress:
   enabled: false
-  className: ""
+  className: "alb"
   host: "app.ktl.ai"
   annotations:
     eks:
       alb.ingress.kubernetes.io/scheme: "internet-facing"
-    gke:
-      kubernetes.io/ingress.class: "gce"
-    aks:
-      kubernetes.io/ingress.class: "azure/application-gateway"
 
 klient:
   image:
