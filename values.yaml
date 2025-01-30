@@ -1,9 +1,8 @@
 cloudProvider: "eks"  # Currently only supporting AWS EKS
 
-accountId: ""  # If not provided, Helm will attempt to infer it
 serviceAccount:
   name: "aws-load-balancer-controller"
-  roleArn: ""  # If empty, Helm will generate based on accountId
+  create: false
 
 service:
   type: "LoadBalancer"
