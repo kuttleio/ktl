@@ -1,4 +1,3 @@
-# templates/service-klient.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -7,17 +6,11 @@ metadata:
   labels:
     app: klient
   annotations:
-    {{- if eq .Values.cloudProvider "eks" }}
-    {{- toYaml .Values.service.annotations.eks | nindent 4 }}
-    {{- end }}
-    {{- if eq .Values.cloudProvider "gke" }}
-    {{- toYaml .Values.service.annotations.gke | nindent 4 }}
-    {{- end }}
-    {{- if eq .Values.cloudProvider "aks" }}
-    {{- toYaml .Values.service.annotations.aks | nindent 4 }}
-    {{- end }}
+    service.beta.kubernetes.io/aws-load-balancer-type: "external"
+    alb.ingress.kubernetes.io/scheme: "internet-facing"
+    alb.ingress.kubernetes.io/group.name: "ktl-alb"
 spec:
-  type: {{ .Values.service.type | default "LoadBalancer" }}
+  type: LoadBalancer
   selector:
     app: klient
   ports:

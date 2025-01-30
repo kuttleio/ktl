@@ -9,7 +9,7 @@ service:
     eks:
       service.beta.kubernetes.io/aws-load-balancer-type: "external"
       alb.ingress.kubernetes.io/scheme: "internet-facing"
-      # For NLB, replace "external" with "nlb" above.
+      alb.ingress.kubernetes.io/group.name: "ktl-alb"
     gke:
       cloud.google.com/load-balancer-type: "External"
     aks:
