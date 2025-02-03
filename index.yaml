@@ -5,11 +5,11 @@ entries:
       helm.sh/resource-policy: keep
     apiVersion: v2
     appVersion: 1.0.0
-    created: "2025-02-03T13:11:08.576981264Z"
+    created: "2025-02-03T13:19:17.692236194Z"
     description: Installs KTL DevPortal
-    digest: 8af4125e37b9668fdebea6f57ebe6eb8ea290bd09762b38a1468783c1fcb4487
+    digest: 67589afc48320e29f3f4338e73bc58259fd7db886db68d98f2b2d08715d057b3
     name: ktl
     urls:
     - https://kuttleio.github.io/ktl/ktl-1.0.0.tgz
     version: 1.0.0
-generated: "2025-02-03T13:11:08.575950371Z"
+generated: "2025-02-03T13:19:17.690443345Z"
