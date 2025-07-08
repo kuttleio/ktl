@@ -12,7 +12,7 @@ env:
 
 jobs:
   deploy-helm-chart:
-    name: Publish Helm Chart to Azure Container Registry
+    name: Build & Publish to ACR
     runs-on: ubuntu-latest
 
     steps:
