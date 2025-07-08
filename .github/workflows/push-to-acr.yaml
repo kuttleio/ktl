@@ -9,6 +9,7 @@ on:
 env:
   ACR_NAME: ktlai
   ACR_LOGIN_SERVER: ktlai.azurecr.io
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   deploy-helm-chart:
