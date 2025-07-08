@@ -12,12 +12,10 @@ env:
 
 jobs:
   deploy-helm-chart:
-    name: Build & Publish to ACR
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup Helm
         uses: azure/setup-helm@v3
@@ -25,7 +23,7 @@ jobs:
       - name: Extract Chart Version
         id: get-version
         run: |
-          VERSION=$(helm show chart . -o json | jq -r .version)
+          VERSION=$(helm show chart . --output json | jq -r .version)
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Package Helm Chart
@@ -34,7 +32,7 @@ jobs:
           helm package . --destination helm-pkg
           ls helm-pkg
 
-      - name: Log in to Azure Container Registry
+      - name: Log in to ACR
         run: |
           echo "${{ secrets.AZ_ACR_PRD_PASS }}" \
             | helm registry login ${{ env.ACR_LOGIN_SERVER }} \
@@ -43,12 +41,4 @@ jobs:
 
       - name: Push Helm Chart to ACR
         run: |
-          helm push helm-pkg/*.tgz \
-            oci://${{ env.ACR_LOGIN_SERVER }}/helm
-
-      - name: Notify Discord
-        if: success()
-        run: |
-          curl -H "Content-Type: application/json" \
-            -d "{\"content\":\":tada: Helm chart v$VERSION published to ${{ env.ACR_LOGIN_SERVER }}/helm\"}" \
-            ${{ secrets.DISCORD_WEBHOOK_URL }}
+          helm push helm-pkg/*.tgz oci://${{ env.ACR_LOGIN_SERVER }}/helm
