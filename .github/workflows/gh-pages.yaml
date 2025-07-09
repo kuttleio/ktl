@@ -1,7 +1,8 @@
-name: Publish Helm Chart
+name: Publish -> GH Pages
 
 on:
   push:
+  workflow_dispatch:
 
 jobs:
   publish:
@@ -14,12 +15,14 @@ jobs:
         uses: azure/setup-helm@v3
 
       - name: Package chart
-        run: helm package . --destination pkg
+        run: |
+          mkdir -p pkg
+          helm package . --destination pkg
 
-      - name: Publish to GitHub Pages
-        uses: helm/chart-releaser-action@v1.4.0
+      - name: Release to GitHub Pages
+        uses: helm/chart-releaser-action@v1
         with:
           charts_dir: pkg
           charts_repo_url: https://kuttleio.github.io/ktl
-          release_repo_url: https://github.com/kuttleio/ktl
-          token: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
