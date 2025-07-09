@@ -1,0 +1,25 @@
+name: Publish Helm Chart
+
+on:
+  push:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v3
+
+      - name: Package chart
+        run: helm package . --destination pkg
+
+      - name: Publish to GitHub Pages
+        uses: helm/chart-releaser-action@v1.4.0
+        with:
+          charts_dir: pkg
+          charts_repo_url: https://kuttleio.github.io/ktl
+          release_repo_url: https://github.com/kuttleio/ktl
+          token: ${{ secrets.GITHUB_TOKEN }}
