@@ -2,6 +2,10 @@ name: Publish -> GH Pages
 
 on:
   push:
+    branches:
+      - master
+    paths-ignore:
+      - '.github/**'
   workflow_dispatch:
 
 jobs:
@@ -23,6 +27,5 @@ jobs:
         uses: helm/chart-releaser-action@v1
         with:
           charts_dir: pkg
-          charts_repo_url: https://kuttleio.github.io/ktl
         env:
           CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -5,12 +5,14 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app: klient
+  {{ if and (eq .Values.cloudProvider "eks") (eq .Values.service.type "LoadBalancer") }}
   annotations:
     service.beta.kubernetes.io/aws-load-balancer-type: "external"
     alb.ingress.kubernetes.io/scheme: "internet-facing"
     alb.ingress.kubernetes.io/group.name: "ktl-alb"
+  {{ end }}
 spec:
-  type: LoadBalancer
+  type: {{ .Values.service.type }}
   selector:
     app: klient
   ports:
