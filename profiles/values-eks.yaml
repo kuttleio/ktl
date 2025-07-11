@@ -1,0 +1,11 @@
+cloudProvider: "eks"
+
+service:
+  type: LoadBalancer
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "external"
+    alb.ingress.kubernetes.io/scheme: "internet-facing"
+    alb.ingress.kubernetes.io/group.name: "ktl-alb"
+
+ingress:
+  enabled: false 

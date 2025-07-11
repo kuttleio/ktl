@@ -1,46 +1,17 @@
-{{- /*
-This file appears after chart installation to provide final instructions and info.
-*/ -}}
-############################################################
-🎉 Welcome to the KTL.ai DevPortal! 🚀
-Your DevPortal has been successfully deployed into Kubernetes and is ready to use!
+{{/*
+Helm NOTES for KTL DevPortal
+*/}}
+############################################
+🎉 KTL.ai DevPortal successfully installed!
 
-What is DevPortal?
-DevPortal is your centralized solution for managing environments, resources, and application lifecycles in Kubernetes.
-It simplifies deployments, scales with your team, and works seamlessly with EKS, GKE, and AKS.
+{{- if eq .Values.service.type "ClusterIP" }}
+Access the UI locally:
+  kubectl -n {{ .Release.Namespace }} port-forward svc/klient 8080:80
+  Open http://localhost:8080 in your browser
+{{- else if eq .Values.service.type "LoadBalancer" }}
+Wait for the LoadBalancer to be provisioned:
+  kubectl get svc -n {{ .Release.Namespace }} klient
+Then open the EXTERNAL-IP/hostname in your browser
+{{- end }}
 
-🌐 How to Access Your Portal:
-1. Wait for the LoadBalancer or Ingress DNS to be ready.
-2. If you're using a LoadBalancer service, run:
-   kubectl get svc -n {{ .Release.Namespace }} klient -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'
-   Then open the resulting URL in your browser.
-
-3. If you're using an Ingress:
-   kubectl get ingress -n {{ .Release.Namespace }} klient-ingress
-   For AWS EKS (ALB): The ADDRESS field shows the ALB hostname.
-   For GKE (GCE Ingress) or AKS, an External IP or hostname appears once provisioning is complete.
-
-📋 Supported Providers:
-- **AWS EKS**: Automatically uses an AWS ALB if service.type=LoadBalancer or Ingress with alb annotations.
-- **Google GKE**: Integrates with Google Cloud External Load Balancer.
-- **Azure AKS**: Works with Azure Load Balancer or Application Gateway.
-
-🛠 Troubleshooting:
-- If the LoadBalancer or Ingress is not available immediately, verify the status:
-   kubectl describe svc -n {{ .Release.Namespace }} klient
-   kubectl get svc -n {{ .Release.Namespace }}
-   kubectl get ingress -n {{ .Release.Namespace }}
-
-💡 Pro Tip:
-Customize this deployment by editing `values.yaml` or using Helm flags:
-   helm upgrade --install ktl ./ktl-chart \
-     --namespace {{ .Release.Namespace }} \
-     --set cloudProvider=eks \
-     --set ingress.enabled=true \
-     ...
-
-📖 Documentation:
-More details and guides at:
-https://github.com/kuttleio/ktl
-
-Thanks for using KTL.ai DevPortal! ✨
+Docs: https://github.com/kuttleio/ktl

@@ -4,10 +4,14 @@ kind: Ingress
 metadata:
   name: klient-ingress
   namespace: {{ .Release.Namespace }}
+  {{ if .Values.ingress.annotations }}
   annotations:
-    alb.ingress.kubernetes.io/scheme: "internet-facing"
+{{ toYaml .Values.ingress.annotations | indent 4 }}
+  {{ end }}
 spec:
-  ingressClassName: "alb"
+  {{ if .Values.ingress.className }}
+  ingressClassName: "{{ .Values.ingress.className }}"
+  {{ end }}
   rules:
     - host: {{ .Values.ingress.host }}
       http:

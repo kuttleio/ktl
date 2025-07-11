@@ -1,128 +1,42 @@
-# 🚀 Kuttle - Self-hosted Dev Portal for Isolated Kubernetes Environments
+# KTL.ai DevPortal Helm Chart
 
-**Kuttle** is a self-hosted developer portal designed to simplify the management of isolated environments in Kubernetes. With Kuttle, you can create, manage, and scale development, testing, and production environments with ease.
-
-## 🌟 **How It Works**
-1. Define environments using a powerful CRD (Custom Resource Definition).
-2. Automatically deploy services, datastores, and configurations into isolated namespaces.
-3. Access environments via custom domains and manage them using a CLI or Helm.
-4. Streamline your workflows with full control over resources and automation.
+KTL DevPortal lets you create and manage fully-isolated Kubernetes *environments* with one Helm install.
 
 ---
 
-## 🚀 **Why Kuttle?**
-- **Full Isolation**: Every environment runs in its own namespace.
-- **Scalability**: Seamlessly manage multiple environments.
-- **Customizable**: Flexible deployment options to suit any workflow.
-- **Self-hosted**: Complete control over your infrastructure.
-
----
-
-## 🚀 **Installation**
-
-1. Add the Kuttle Helm repository:
-   ```bash
-   helm repo add ktl https://ktlai-install.s3.us-west-2.amazonaws.com/helm-charts/
-   helm repo update
-   ```
-
-2. Install Kuttle with default settings (latest version):
-   ```bash
-   helm install ktl ktl/ktl --namespace ktl --create-namespace
-   ```
-
-3. Install Kuttle with a specific version:
-   ```bash
-   helm install ktl ktl/ktl --namespace ktl --create-namespace --version 1.0.1
-   ```
-
-4. Customize installation:
-   To customize your installation, provide additional parameters during installation. For example:
-   ```bash
-   helm install ktl ktl/ktl --namespace ktl --create-namespace \
-    --set operator.replicas=2 \
-    --set ingress.host=custom.yourdomain.com
-   ```
-
----
-
-## 📦 **How to Update**
-
-1. Update the Helm repository:
-   ```bash
-   helm repo update
-   ```
-
-2. Upgrade Kuttle to the latest version:
-   ```bash
-   helm upgrade ktl ktl/ktl --namespace ktl
-   ```
-
-3. Upgrade Kuttle to a specific version:
-   ```bash
-   helm upgrade ktl ktl/ktl --namespace ktl --version 1.0.1
-   ```
-
----
-
-## 📦 **Customizing Installation**
-
-| **Parameter**      | **Default**          | **Description**                |
-|--------------------|----------------------|--------------------------------|
-| `namespace`        | `ktl`                | Namespace for Kuttle resources |
-| `operator.image`   | `kuttleio/ktl:v1.0.0`| Image for the Kuttle operator  |
-| `operator.replicas`| `1`                  | Number of replicas             |
-| `ingress.host`     | `app.ktl.ai`         | Custom domain for access       |
-| `license.token`    | `FREE`               | License token                  |
-
-To customize your installation:
-- Modify the `values.yaml` file directly, or
-- Pass parameters via the `--set` flag during installation.
-
-Example:
+## Quick install (local kind / minikube / any cluster)
 ```bash
-helm install ktl ktl/ktl --namespace ktl --create-namespace \
-  --set ingress.host=custom.yourdomain.com \
-  --set operator.replicas=2
+helm repo add ktl https://kuttleio.github.io/ktl
+helm repo update
+helm install ktl ktl/ktl \
+  --namespace ktl --create-namespace
+
+# Forward the UI to your workstation
+kubectl -n ktl port-forward svc/klient 8080:80
+# Open http://localhost:8080
+```
+
+## AWS EKS
+```bash
+helm install ktl ktl/ktl \
+  --namespace ktl --create-namespace \
+  -f profiles/values-eks.yaml
+# Wait for the LoadBalancer to get an address
+kubectl get svc -n ktl klient
+```
+
+*(Add profiles for GKE / AKS the same way if required.)*
+
+---
+
+### Local demo on kind
+```bash
+kind create cluster --name ktl
+helm repo add ktl https://kuttleio.github.io/ktl && helm repo update
+helm install ktl ktl/ktl --namespace ktl --create-namespace
+kubectl -n ktl port-forward svc/klient 8080:80
 ```
 
 ---
 
-## 🗑️ **Uninstalling Kuttle**
-By default, the standard uninstallation keeps your CRDs and data safe, allowing you to reinstall or upgrade without data loss.
-
-### **Standard Uninstallation**
-To uninstall Kuttle and remove all resources created by Helm:
-```bash
-helm uninstall ktl --namespace ktl
-```
-
-**Note:** 
-- The Custom Resource Definitions (CRDs) and any resources created using them (e.g., `Env` objects) will remain in the cluster.
-- This ensures that your data is preserved even if you uninstall Kuttle.
-
----
-
-### ⚠️ **Complete Removal (Destructive Action)**
-
-If you want to completely remove Kuttle, including all CRDs and their resources, follow these steps. **Be cautious:** this action is irreversible.
-
-1. **Uninstall Helm release:**
-   ```bash
-   helm uninstall ktl --namespace ktl
-   ```
-
-2. **Delete all CRD resources:**
-   ```bash
-   kubectl delete env --all --namespace ktl
-   ```
-
-3. **Delete the CRD itself:**
-   ```bash
-   kubectl delete crd envs.ktl.ai
-   ```
-
-**Warning:** 
-- This will permanently delete all environments and related data. Ensure you have backups or exported data before proceeding.
-
----
+`values.yaml` defaults are cloud-agnostic (ClusterIP, no cloud annotations).  Cloud-specific options live in separate profile files or can be passed via `--set`.

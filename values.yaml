@@ -1,33 +1,32 @@
-cloudProvider: "eks"  # Currently only supporting AWS EKS
+# Default values for KTL DevPortal
 
-serviceAccount:
-  name: "aws-load-balancer-controller"
-  create: false
+replicaCount: 1
+
+cloudProvider: ""  # "", "eks"
 
 service:
-  type: "LoadBalancer"
-  annotations:
-    eks:
-      service.beta.kubernetes.io/aws-load-balancer-type: "external"
-      alb.ingress.kubernetes.io/scheme: "internet-facing"
-      alb.ingress.kubernetes.io/group.name: "ktl-alb"
+  type: ClusterIP
+  port: 80
+  annotations: {}
 
 ingress:
   enabled: false
-  className: "alb"
-  host: "app.ktl.ai"
-  annotations:
-    eks:
-      alb.ingress.kubernetes.io/scheme: "internet-facing"
+  className: ""
+  host: ""
+  annotations: {}
+
+serviceAccount:
+  create: false
+  name: "ktl-operator"
 
 klient:
   image:
     repository: "ktlai/klient"
     tag: "latest"
-    pullPolicy: "Always"
+    pullPolicy: "IfNotPresent"
 
 kop:
   image:
     repository: "ktlai/kop"
     tag: "latest"
-    pullPolicy: "Always"
+    pullPolicy: "IfNotPresent"
