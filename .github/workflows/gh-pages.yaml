@@ -28,6 +28,7 @@ jobs:
         uses: helm/chart-releaser-action@v1
         with:
           charts_dir: pkg
+          token: ${{ secrets.GITHUB_TOKEN }}
         env:
           CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
