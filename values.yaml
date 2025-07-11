@@ -21,12 +21,12 @@ serviceAccount:
 
 klient:
   image:
-    repository: "ktlai/klient"
+    repository: "public.ecr.aws/j3b6v1h4/klient"
     tag: "latest"
     pullPolicy: "IfNotPresent"
 
 kop:
   image:
-    repository: "ktlai/kop"
+    repository: "public.ecr.aws/j3b6v1h4/kop"
     tag: "latest"
     pullPolicy: "IfNotPresent"
