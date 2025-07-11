@@ -1,13 +1,19 @@
 # KTL.ai DevPortal Helm Chart
 
-KTL DevPortal lets you create and manage fully-isolated Kubernetes *environments* with one Helm install.
+KTL.ai turns any Kubernetes cluster into a self-hosted DevOps platform / PaaS with full control.
+
+**Key features**
+- Isolated dev/stage/prod environments via CRD & UI
+- One-click stop / start, status & live logs
+- Built-in Ingress with TLS, DNS automation & WAF
+- CI/CD ready: Helm, GitHub Actions, GitOps
+- Secure by default: RBAC, NetworkPolicies, image scanning
 
 ---
 
-## Quick install (local kind / minikube / any cluster)
+## Quick install (kind / minikube / any cluster)
 ```bash
-helm repo add ktl https://kuttleio.github.io/ktl
-helm repo update
+helm repo add ktl https://kuttleio.github.io/ktl && helm repo update
 helm install ktl ktl/ktl \
   --namespace ktl --create-namespace
 
@@ -25,11 +31,11 @@ helm install ktl ktl/ktl \
 kubectl get svc -n ktl klient
 ```
 
-*(Add profiles for GKE / AKS the same way if required.)*
+> GKE / AKS: create a profile file the same way or pass `--set service.type=LoadBalancer` plus provider-specific annotations.
 
 ---
 
-### Local demo on kind
+### Local demo on kind (full flow)
 ```bash
 kind create cluster --name ktl
 helm repo add ktl https://kuttleio.github.io/ktl && helm repo update
@@ -39,4 +45,4 @@ kubectl -n ktl port-forward svc/klient 8080:80
 
 ---
 
-`values.yaml` defaults are cloud-agnostic (ClusterIP, no cloud annotations).  Cloud-specific options live in separate profile files or can be passed via `--set`.
+Defaults (`values.yaml`) are cloud-agnostic (ClusterIP, no cloud annotations).  Cloud-specific settings live in profile files or can be set inline with `--set`.
