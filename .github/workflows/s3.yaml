@@ -55,7 +55,7 @@ jobs:
           COMMIT_URL="https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
           COMMIT_AUTHOR="${{ github.actor }}"
           curl -H "Content-Type: application/json" \
-            -d "{\"content\": \"${STATUS} by ${COMMIT_AUTHOR}\n${COMMIT_MESSAGE}\n${COMMIT_URL}\"}" \
+            -d "{\"content\": \"${STATUS}\n[${COMMIT_MESSAGE}](${COMMIT_URL}) - ${COMMIT_AUTHOR}\"}" \
             ${{ secrets.DISCORD_WEBHOOK_URL }}
 
       - name: Notify Discord (failure)
@@ -66,5 +66,5 @@ jobs:
           COMMIT_URL="https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
           COMMIT_AUTHOR="${{ github.actor }}"
           curl -H "Content-Type: application/json" \
-            -d "{\"content\": \"${STATUS} by ${COMMIT_AUTHOR}\n${COMMIT_MESSAGE}\n${COMMIT_URL}\"}" \
+            -d "{\"content\": \"${STATUS}\n[${COMMIT_MESSAGE}](${COMMIT_URL}) - ${COMMIT_AUTHOR}\"}" \
             ${{ secrets.DISCORD_WEBHOOK_URL }}
