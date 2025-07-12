@@ -40,7 +40,7 @@ kubectl get svc -n ktl klient
 ### Local demo on kind (full flow)
 ```bash
 kind create cluster --name ktl
-helm repo add ktl https://kuttleio.github.io/ktl && helm repo update
+helm repo add ktl https://ktl-helm-charts.s3.amazonaws.com && helm repo update
 helm install ktl ktl/ktl --namespace ktl --create-namespace
 kubectl -n ktl port-forward svc/klient 8080:80
 ```
