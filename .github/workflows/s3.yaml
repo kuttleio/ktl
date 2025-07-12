@@ -1,0 +1,68 @@
+name: Publish Helm Chart to S3
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+env:
+  S3_REGION: us-west-2
+  S3_BUCKET: ktl-helm-charts
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+
+      - name: Set up AWS CLI
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ECR_DEV_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_ECR_DEV_SECRET_KEY }}
+          aws-region: ${{ env.S3_REGION }}
+
+      - name: Package Helm chart
+        run: |
+          mkdir -p s3-repo
+          helm package . --destination s3-repo
+
+      - name: Download existing index.yaml from S3 (if any)
+        run: |
+          aws s3 cp s3://${{ env.S3_BUCKET }}/index.yaml s3-repo/index.yaml || true
+
+      - name: Update Helm repo index
+        run: |
+          helm repo index s3-repo --url https://${{ env.S3_BUCKET }}.s3.amazonaws.com
+
+      - name: Upload chart and index.yaml to S3
+        run: |
+          aws s3 sync s3-repo/ s3://${{ env.S3_BUCKET }}/ --acl public-read --delete
+
+      - name: Notify Discord (success)
+        if: success()
+        run: |
+          STATUS="✅ Helm chart published to S3."
+          COMMIT_MESSAGE=$(git log -1 --pretty=%B | sed 's/"/\\"/g')
+          COMMIT_URL="https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
+          COMMIT_AUTHOR="${{ github.actor }}"
+          curl -H "Content-Type: application/json" \
+            -d "{\"content\": \"${STATUS}\\n[${COMMIT_MESSAGE}](${COMMIT_URL}) - ${COMMIT_AUTHOR}\"}" \
+            ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+      - name: Notify Discord (failure)
+        if: failure()
+        run: |
+          STATUS="⚠️ Helm chart publish to S3 failed!"
+          COMMIT_MESSAGE=$(git log -1 --pretty=%B | sed 's/"/\\"/g')
+          COMMIT_URL="https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
+          COMMIT_AUTHOR="${{ github.actor }}"
+          curl -H "Content-Type: application/json" \
+            -d "{\"content\": \"${STATUS}\\n[${COMMIT_MESSAGE}](${COMMIT_URL}) - ${COMMIT_AUTHOR}\"}" \
+            ${{ secrets.DISCORD_WEBHOOK_URL }}
