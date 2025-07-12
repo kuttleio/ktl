@@ -1,4 +1,4 @@
-name: Publish Helm Chart to S3
+name: Publish --> S3
 
 on:
   push:
@@ -11,7 +11,7 @@ env:
   S3_BUCKET: ktl-helm-charts
 
 jobs:
-  publish:
+  build-publish-notify:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,8 +24,8 @@ jobs:
       - name: Set up AWS CLI
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ECR_DEV_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_ECR_DEV_SECRET_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_ECR_PROD_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_ECR_PROD_SECRET_KEY }}
           aws-region: ${{ env.S3_REGION }}
 
       - name: Package Helm chart
