@@ -13,7 +13,9 @@ KTL.ai turns any Kubernetes cluster into a self-hosted DevOps platform / PaaS wi
 
 ## Quick install (kind / minikube / any cluster)
 ```bash
-helm repo add ktl https://kuttleio.github.io/ktl && helm repo update
+# Add the Helm repo (S3):
+helm repo add ktl https://ktl-helm-charts.s3.amazonaws.com
+helm repo update
 helm install ktl ktl/ktl \
   --namespace ktl --create-namespace
 
