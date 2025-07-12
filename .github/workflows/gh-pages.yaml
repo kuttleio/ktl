@@ -25,7 +25,7 @@ jobs:
           helm package . --destination pkg
 
       - name: Release to GitHub Pages
-        uses: helm/chart-releaser-action@v1
+        uses: helm/chart-releaser-action@v1.7.0
         with:
           charts_dir: pkg
           token: ${{ secrets.GITHUB_TOKEN }}
