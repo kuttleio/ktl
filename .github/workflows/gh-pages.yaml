@@ -1,12 +1,8 @@
 name: Publish -> GH Pages
 
 on:
-  push:
-    branches:
-      - master
-    paths-ignore:
-      - '.github/**'
-      - 'README.md'
+  release:
+    types: [published]
   workflow_dispatch:
 
 jobs:
@@ -25,13 +21,11 @@ jobs:
           helm package . --destination pkg
 
       - name: Release to GitHub Pages
-        uses: helm/chart-releaser-action@v1
+        uses: helm/chart-releaser-action@v1.7.0
         with:
           charts_dir: pkg
-          token: ${{ secrets.GITHUB_TOKEN }}
         env:
           CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Notify Discord (success)
         if: success()
