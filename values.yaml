@@ -16,7 +16,7 @@ ingress:
   annotations: {}
 
 serviceAccount:
-  create: false
+  create: true
   name: "ktl-operator"
 
 klient:
