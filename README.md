@@ -11,18 +11,24 @@ KTL.ai turns any Kubernetes cluster into a self-hosted DevOps platform / PaaS wi
 
 ---
 
-## Quick install (kind / minikube / any cluster)
+## Quick install (kind / minikube)
 ```bash
-# Add the Helm repo (S3):
-helm repo add ktl https://ktl-helm-charts.s3.amazonaws.com
-helm repo update
-helm install ktl ktl/ktl \
-  --namespace ktl --create-namespace
+# 1) Install NGINX Ingress (if not present)
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && helm repo update
+helm upgrade --install nginx ingress-nginx/ingress-nginx \
+  --namespace ingress-nginx --create-namespace \
+  --set controller.admissionWebhooks.enabled=false
 
-# Forward the UI to your workstation
-# Wait until the pods are Running, then port-forward
-kubectl -n ktl port-forward svc/klient 8080:80
-# Open http://localhost:8080
+# 2) Install KTL DevPortal with Ingress enabled (host left blank → wildcard)
+helm repo add ktl https://ktl-helm-charts.s3.amazonaws.com && helm repo update
+helm upgrade --install ktl ktl/ktl \
+  --namespace ktl --create-namespace \
+  --set ingress.enabled=true \
+  --set ingress.className=nginx
+
+# 3) Port-forward the ingress controller
+kubectl -n ingress-nginx port-forward svc/nginx-ingress-nginx-controller 8080:80
+# UI → http://localhost:8080 , API lives at /api/*
 ```
 
 ## AWS EKS
