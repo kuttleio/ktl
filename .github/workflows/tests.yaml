@@ -42,8 +42,9 @@ jobs:
           kubectl -n ingress-nginx port-forward svc/nginx-ingress-nginx-controller 8080:80 &
           PF=$!
           sleep 5
+          HOST=dev.ktl.local
           echo "Checking / (expect 200)"
-          [ "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/)" == "200" ]
+          [ "$(curl -s -o /dev/null -w '%{http_code}' -H \"Host: $HOST\" http://localhost:8080/)" == "200" ]
           echo "Checking /api/environment/list (expect 200)"
-          [ "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/api/environment/list)" == "200" ]
+          [ "$(curl -s -o /dev/null -w '%{http_code}' -H \"Host: $HOST\" http://localhost:8080/api/environment/list)" == "200" ]
           kill $PF 
