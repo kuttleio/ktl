@@ -13,8 +13,9 @@ spec:
   ingressClassName: "{{ .Values.ingress.className }}"
   {{ end }}
   rules:
-    - {{- if .Values.ingress.host }}host: {{ .Values.ingress.host }}{{- end }}
-      http:
+    -
+      {{- if .Values.ingress.host }}      host: {{ .Values.ingress.host }}
+      {{- end }}      http:
         paths:
           - path: /api
             pathType: Prefix
