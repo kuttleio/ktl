@@ -10,9 +10,15 @@ Helm NOTES for KTL DevPortal
    • EKS: AWS Load Balancer Controller or nginx-ingress.
    • GKE / AKS: built-in controller or nginx-ingress.
 
+{{- if .Values.ingress.host }}
 Access the UI:
-  http://{{ default "<INGRESS-HOST>" .Values.ingress.host }}/
+  http://{{ .Values.ingress.host }}/
 API endpoint is served under the same host at /api/*.
+{{- else }}
+Access the UI via port-forward:
+  kubectl -n ingress-nginx port-forward svc/nginx-ingress-nginx-controller 8080:80
+  Open http://localhost:8080 in your browser
+{{- end }}
 {{- else }}
 ############################################
 🎉 KTL.ai DevPortal successfully installed!

@@ -25,7 +25,7 @@ jobs:
       - name: Install NGINX Ingress
         run: |
           helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && helm repo update
-          helm install nginx ingress-nginx/ingress-nginx \
+          helm upgrade --install nginx ingress-nginx/ingress-nginx \
             --namespace ingress-nginx --create-namespace
           kubectl -n ingress-nginx wait --for=condition=Available deploy/nginx-ingress-nginx-controller --timeout=180s
 
@@ -34,21 +34,23 @@ jobs:
           helm install ktl . \
             --namespace ktl --create-namespace \
             --set ingress.enabled=true \
-            --set ingress.className=nginx \
-            --set ingress.host=dev.ktl.local
+            --set ingress.className=nginx
           kubectl -n ktl rollout status deploy/klient --timeout=180s
           kubectl -n ktl rollout status deploy/kop --timeout=180s
 
-      - name: Smoke tests
+      - name: Helm in-cluster tests
+        run: |
+          helm test ktl -n ktl --timeout 2m
+
+      - name: Smoke tests via Ingress
         run: |
           kubectl -n ingress-nginx port-forward svc/nginx-ingress-nginx-controller 8080:80 &
           PF=$!
           sleep 5
-          HOST=dev.ktl.local
           echo "Checking / (expect 200)"
-          CODE=$(curl -s -o /dev/null -w '%{http_code}' -H "Host: $HOST" http://localhost:8080/)
-          [[ "$CODE" =~ ^2|^3 ]] || { echo "Unexpected code $CODE"; exit 1; }
+          CODE=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/)
+          [[ "$CODE" =~ ^2|^3 ]] || { echo "Root path failed: $CODE"; kill $PF; exit 1; }
           echo "Checking /api/environment/list (expect 200)"
-          CODE=$(curl -s -o /dev/null -w '%{http_code}' -H "Host: $HOST" http://localhost:8080/api/environment/list)
-          [[ "$CODE" =~ ^2|^3 ]] || { echo "Unexpected code $CODE"; exit 1; }
+          CODE=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/api/environment/list)
+          [ "$CODE" == "200" ] || { echo "/api path failed: $CODE"; kill $PF; exit 1; }
           kill $PF 
