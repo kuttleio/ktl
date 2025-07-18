@@ -25,8 +25,8 @@ jobs:
       - name: Install NGINX Ingress
         run: |
           helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && helm repo update
-          helm install nginx ingress-nginx/ingress-nginx \
-            --namespace ingress-nginx --create-namespace --quiet
+          helm upgrade --install nginx ingress-nginx/ingress-nginx \
+            --namespace ingress-nginx --create-namespace
           kubectl -n ingress-nginx wait --for=condition=Available deploy/nginx-ingress-nginx-controller --timeout=180s
 
       - name: Install KTL DevPortal chart
