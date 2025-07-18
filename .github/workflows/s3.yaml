@@ -1,10 +1,9 @@
 name: Publish -> S3
 
 on:
-  push:
-    branches:
-      - master
   workflow_dispatch:
+  release:
+    types: [published]
 
 env:
   S3_REGION: us-west-2
