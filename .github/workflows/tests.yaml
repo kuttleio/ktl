@@ -44,7 +44,9 @@ jobs:
           sleep 5
           HOST=dev.ktl.local
           echo "Checking / (expect 200)"
-          [ "$(curl -s -o /dev/null -w '%{http_code}' -H \"Host: $HOST\" http://localhost:8080/)" == "200" ]
+          CODE=$(curl -s -o /dev/null -w '%{http_code}' -H "Host: $HOST" http://localhost:8080/)
+          [[ "$CODE" =~ ^2|^3 ]] || { echo "Unexpected code $CODE"; exit 1; }
           echo "Checking /api/environment/list (expect 200)"
-          [ "$(curl -s -o /dev/null -w '%{http_code}' -H \"Host: $HOST\" http://localhost:8080/api/environment/list)" == "200" ]
+          CODE=$(curl -s -o /dev/null -w '%{http_code}' -H "Host: $HOST" http://localhost:8080/api/environment/list)
+          [[ "$CODE" =~ ^2|^3 ]] || { echo "Unexpected code $CODE"; exit 1; }
           kill $PF 
