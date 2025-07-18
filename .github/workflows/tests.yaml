@@ -1,4 +1,4 @@
-name: Helm chart tests
+name: Smoke tests
 
 on:
   pull_request:
@@ -29,7 +29,7 @@ jobs:
 
       - name: Install KTL DevPortal chart
         run: |
-          helm install ktl ./ktl \
+          helm install ktl . \
             --namespace ktl --create-namespace \
             --set ingress.enabled=true \
             --set ingress.className=nginx \
