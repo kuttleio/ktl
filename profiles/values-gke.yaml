@@ -1,0 +1,8 @@
+cloudProvider: "gke"
+
+service:
+  type: LoadBalancer
+  annotations: {}
+
+ingress:
+  enabled: false 

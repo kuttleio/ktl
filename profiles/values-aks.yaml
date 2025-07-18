@@ -1,0 +1,8 @@
+cloudProvider: "aks"
+
+service:
+  type: LoadBalancer
+  annotations: {}
+
+ingress:
+  enabled: false 

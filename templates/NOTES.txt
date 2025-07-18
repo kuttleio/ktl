@@ -1,17 +1,31 @@
 {{/*
 Helm NOTES for KTL DevPortal
 */}}
+{{- if .Values.ingress.enabled }}
+############################################
+🎉 KTL.ai DevPortal installed with Ingress!
+
+👉 Make sure an Ingress controller is running in the cluster.
+   • kind / minikube: install NGINX Ingress (`helm install nginx ingress-nginx/ingress-nginx ...`).
+   • EKS: AWS Load Balancer Controller or nginx-ingress.
+   • GKE / AKS: built-in controller or nginx-ingress.
+
+Access the UI:
+  http://{{ default "<INGRESS-HOST>" .Values.ingress.host }}/
+API endpoint is served under the same host at /api/*.
+{{- else }}
 ############################################
 🎉 KTL.ai DevPortal successfully installed!
 
-{{- if eq .Values.service.type "ClusterIP" }}
+{{-   if eq .Values.service.type "ClusterIP" }}
 Access the UI locally:
   kubectl -n {{ .Release.Namespace }} port-forward svc/klient 8080:80
   Open http://localhost:8080 in your browser
-{{- else if eq .Values.service.type "LoadBalancer" }}
+{{-   else if eq .Values.service.type "LoadBalancer" }}
 Wait for the LoadBalancer to be provisioned:
   kubectl get svc -n {{ .Release.Namespace }} klient
 Then open the EXTERNAL-IP/hostname in your browser
+{{-   end }}
 {{- end }}
 
 Docs: https://github.com/kuttleio/ktl
