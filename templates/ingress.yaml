@@ -16,6 +16,13 @@ spec:
     - host: {{ .Values.ingress.host }}
       http:
         paths:
+          - path: /api(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: kop
+                port:
+                  number: 9000
           - path: /
             pathType: Prefix
             backend:
