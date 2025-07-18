@@ -16,8 +16,7 @@ KTL.ai turns any Kubernetes cluster into a self-hosted DevOps platform / PaaS wi
 # 1) Install NGINX Ingress (if not present)
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && helm repo update
 helm upgrade --install nginx ingress-nginx/ingress-nginx \
-  --namespace ingress-nginx --create-namespace \
-  --set controller.admissionWebhooks.enabled=false
+  --namespace ingress-nginx --create-namespace
 
 # 2) Install KTL DevPortal with Ingress enabled (host left blank → wildcard)
 helm repo add ktl https://ktl-helm-charts.s3.amazonaws.com && helm repo update
@@ -104,8 +103,7 @@ Then install/upgrade the chart with Ingress enabled:
 helm upgrade --install ktl ktl/ktl \
   --namespace ktl --create-namespace \
   --set ingress.enabled=true \
-  --set ingress.className=nginx \
-  --set ingress.host=dev.ktl.local
+  --set ingress.className=nginx
 ```
 * **EKS** – make sure the [AWS Load Balancer Controller](https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html) is installed (or use nginx-ingress).  Quick install:
 ```bash
