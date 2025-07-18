@@ -62,6 +62,22 @@ kubectl get svc -n ktl klient
 
 ---
 
+## Upgrade to latest version
+```bash
+# Fetch newest chart package information
+helm repo update
+
+# Upgrade existing release (keeps your current values)
+helm upgrade ktl ktl/ktl \
+  --namespace ktl --reuse-values
+```
+If you are running on kind/minikube and expose the UI via port-forward, the existing command continues to work:
+```bash
+kubectl -n ingress-nginx port-forward svc/nginx-ingress-nginx-controller 8080:80
+```
+
+---
+
 ### Local demo on kind (full flow)
 ```bash
 kind create cluster --name ktl
